@@ -9,18 +9,27 @@ namespace HelpTrader.Controllers;
 public class TraderController : ControllerBase
 {
     private readonly IBrokerDataService _service;
-
-    public TraderController(IBrokerDataService service)
-    {
-        _service = service;
-    }
+    
+        public TraderController(IBrokerDataService service)
+        {
+            _service = service;
+        }
 
     [HttpGet]
     [Route("all")]
     [Consumes(MediaTypeNames.Application.Json)]
  
-    public BrokerData GetAbc()
+    public async Task<BrokerData> GetAbc()
     {
-        return _service.AnalysisShare();
+        return await _service.AnalysisShare();
+    }
+
+    [HttpGet]
+    [Route("all/share/{share}")]
+    [Consumes(MediaTypeNames.Application.Json)]
+ 
+    public async Task<BrokerData> GetDataForShare([FromRoute] string share)
+    {
+        return await _service.AnalysisForShare(share);
     }
 }

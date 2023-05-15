@@ -22,4 +22,12 @@ public class BrokerController : ControllerBase
     {
         return _service.GetBrokerData();
     }
+    
+    [HttpGet]
+    [Route("BrokerData/share/{share}")]
+    [Consumes(MediaTypeNames.Application.Json)]
+    public BrokerData GetBrokerService([FromRoute]string share)
+    {
+        return _service.GetBrokerData(share);
+    }
 }

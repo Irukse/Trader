@@ -22,4 +22,33 @@ public class BrokerService : IBrokerService
         
         return brokerData;
     }
+    
+    public BrokerData GetBrokerData(string share)
+    {
+        var price = new decimal(_price.Next(10, 15));
+
+        if (share.Equals("Ford"))
+        {
+            var brokerData = new BrokerData()
+            {
+                Share = "Ford",
+                Price = price,
+            };
+        
+            return brokerData;
+        }
+        
+        else if (share.Equals("Lada"))
+        {
+            var brokerData = new BrokerData()
+            {
+                Share = "Lada",
+                Price = price,
+            };
+        
+            return brokerData;
+        }
+
+        return null;
+    }
 }

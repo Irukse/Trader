@@ -10,6 +10,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<IBrokerDataService, BrokerDataService>();
+builder.Services.AddScoped<ISimulatorBrokerClient, SimulatorBrokerClient>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

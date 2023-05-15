@@ -4,5 +4,6 @@ namespace HelpTrader.Services;
 
 public interface IBrokerDataService
 {
-    public BrokerData AnalysisShare();
+    public Task<BrokerData> AnalysisShare();
+    public Task<BrokerData> AnalysisForShare(string share);
 }
