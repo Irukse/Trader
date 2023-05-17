@@ -51,4 +51,52 @@ public class BrokerService : IBrokerService
 
         return null;
     }
+    
+    public List<string> GetListDataShares(string share)
+    {
+        
+        var figiFord = "FIGIFORD";
+        var figiLada = "FIGILADA";
+
+        if (share.Equals("Ford"))
+        {
+            var brokerData = new List<string>()
+            {
+                 "Ford",
+                 figiFord,
+            };
+        
+            return brokerData;
+        }
+        
+        else if (share.Equals("Lada"))
+        {
+            var brokerData = new List<string>()
+            {
+                "Lada",
+                figiLada,
+            };
+        
+            return brokerData;
+        }
+
+        return null;
+    }
+
+    public decimal? GetPrice(string figi)
+    {
+        var priceF = new decimal(_price.Next(10, 15));
+        
+        var priceL = new decimal(_price.Next(20, 25));
+        if (figi.Equals("FIGIFORD"))
+        {
+            return priceF;
+        }
+        if (figi.Equals("FIGILADA"))
+        {
+            return priceL;
+        }
+
+        return null;
+    }
 }

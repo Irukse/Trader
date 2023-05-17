@@ -40,4 +40,20 @@ public class TraderController : ControllerBase
     {
         return await _service.GetListShareAsync(shared);
     }
+    
+    [HttpGet("[action]")]
+    [Route("all/share/list/datafigi")]
+    [Consumes(MediaTypeNames.Application.Json)]
+    public async Task<List<ShareData>> GetListDataFigi(List<string> shared)
+    {
+        return await _service.GetListDataFigiShareAsync(shared);
+    }
+    
+    [HttpGet("[action]")]
+    [Route("all/share/price/{figi}")]
+    [Consumes(MediaTypeNames.Application.Json)]
+    public async Task<SharePrice> GetPriceData(string figi)
+    {
+        return await _service.GetPriceShareAsync(figi);
+    }
 }

@@ -30,4 +30,20 @@ public class BrokerController : ControllerBase
     {
         return _service.GetBrokerData(share);
     }
+    
+    [HttpGet]
+    [Route("BrokerData/datashare/{share}")]
+    [Consumes(MediaTypeNames.Application.Json)]
+    public List<string> GetListDataShares([FromRoute]string share)
+    {
+        return _service.GetListDataShares(share);
+    }
+    
+    [HttpGet]
+    [Route("BrokerData/Price/{figi}")]
+    [Consumes(MediaTypeNames.Application.Json)]
+    public decimal? GetPriceShares([FromRoute]string figi)
+    {
+        return _service.GetPrice(figi);
+    }
 }
