@@ -32,4 +32,12 @@ public class TraderController : ControllerBase
     {
         return await _service.AnalysisForShare(share);
     }
+    
+    [HttpGet("[action]")]
+    [Route("all/share/list/")]
+    [Consumes(MediaTypeNames.Application.Json)]
+    public async Task<List<BrokerData>> GetListDataForShare(List<string> shared)
+    {
+        return await _service.GetListShareAsync(shared);
+    }
 }

@@ -13,7 +13,7 @@ public class SimulatorBrokerClient : HttpServiceClientBase, ISimulatorBrokerClie
         return result;
     }
 
-    public async Task<T?> GetDataForShare<T>(string share)
+    public async Task<T?> GetDataForShareAsync<T>(string share)
     {
         var url = GetUrl(share);
         var result = await GetSimulatorData<T>(url);
