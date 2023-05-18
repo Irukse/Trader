@@ -49,11 +49,36 @@ public class TraderController : ControllerBase
         return await _service.GetListDataFigiShareAsync(shared);
     }
     
+    // [HttpGet("[action]")]
+    // [Route("all/share/price/{figi}")]
+    // [Consumes(MediaTypeNames.Application.Json)]
+    // public async Task<SharePrice> GetPriceData(string figi)
+    // {
+    //     return await _service.GetPriceShareAsync(figi);
+    // }
+    
     [HttpGet("[action]")]
     [Route("all/share/price/{figi}")]
     [Consumes(MediaTypeNames.Application.Json)]
-    public async Task<SharePrice> GetPriceData(string figi)
+    public async Task<List<SharePrice>> GetPriceData(List<string> figi)
     {
-        return await _service.GetPriceShareAsync(figi);
+        return await _service.GetPriceShareListAsync(figi);
     }
+    
+    [HttpGet("[action]")]
+    [Route("all/share/price/analysis/{share}")]
+    [Consumes(MediaTypeNames.Application.Json)]
+    public async Task<List<DataAnalysisShare>> GetAnalysisPriceData(List<string> share)
+    {
+        return await _service.GetAnalysisShareAsync(share);
+    }
+    
+    // [HttpGet("{share}")]
+    // [Route("all/share/price/analysis/")]
+    // [Consumes(MediaTypeNames.Application.Json)]
+    // public async Task<List<DataAnalysisShare>> GetAnalysisPriceData(List<string> share)
+    // {
+    //     return await _service.GetAnalysisShareAsync(share);
+    // }
+
 }

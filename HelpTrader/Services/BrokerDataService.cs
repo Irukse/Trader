@@ -1,3 +1,4 @@
+using System.Threading.Tasks.Dataflow;
 using HelpTrader.Models;
 
 namespace HelpTrader.Services;
@@ -65,26 +66,32 @@ public class BrokerDataService : IBrokerDataService
         return Task.FromResult(brokerDataList);
     }
 
+    //work method
     public Task<List<ShareData>> GetListDataFigiShareAsync(List<string> share)
     {
         var shareDataList = new List<ShareData>();
         Parallel.ForEach(share, async s =>
         {
             var data = await _client.GetDataFigiForShareAsync<List<string>>(s);
-            if (data == null) return;
-            var brokerData = new ShareData()
-            {
-                NameShare = data[0],
-                Figi = data[1],
-            };
-            shareDataList.Add(brokerData);
+                if (data == null) return;
+                // возможно не успевает записать 
+                var brokerData = new ShareData()
+                {
+                    NameShare = data[0],
+                    Figi = data[1],
+                };
+                shareDataList.Add(brokerData);
+                
             //записать в бд
         });
         return Task.FromResult(shareDataList);
     }
 
+    //work method 
     public async Task<SharePrice> GetPriceShareAsync(string figi)
     {
+        //первым делом заходит в рэдис и пытается получить кэш данных
+        
         var data = await _client.GetPriceForShareAsync<decimal>(figi);
         var brokerData = new SharePrice()
         {
@@ -93,6 +100,54 @@ public class BrokerDataService : IBrokerDataService
         };
         //записать в бд
         return brokerData;
+    }
+    
+    //work method 
+    public async Task<List<SharePrice>> GetPriceShareListAsync(List<string> figiList)
+    {
+        var brokerDataList = new List<SharePrice>();
+        //первым делом заходит в рэдис и пытается получить кэш данных
+        
+        Parallel.ForEach(figiList, async figi =>
+        {
+            var data = await _client.GetPriceForShareAsync<decimal>(figi);
+            var brokerData = new SharePrice()
+            {
+                Figi = figi,
+                Price = data,
+            };
+            brokerDataList.Add(brokerData);
+        });
+        
+        return brokerDataList;
+    }
+    
+    public async Task<List<DataAnalysisShare>> GetAnalysisShareAsync(List<string> share)
+    {
+        var dataAnalysisShareList = new List<DataAnalysisShare>();
+        var shareData = await GetListDataFigiShareAsync(share);
+        
+        var figiList = shareData.Select(x => x.Figi).ToList();
+        
+        var sharePrice = await GetPriceShareListAsync(figiList);
+
+        var dataAnalysisShares = from sd in shareData
+            join cp in sharePrice on sd.Figi equals cp.Figi
+            select new  { Name = sd.NameShare, Price = cp.Price };
+
+        foreach (var VARIABLE in dataAnalysisShares)
+        {
+            var dataAnalysisShare = new DataAnalysisShare()
+            {
+                Name = VARIABLE.Name,
+                Price = VARIABLE.Price,
+                FairPrice = VARIABLE.Price * 3,
+            };
+            dataAnalysisShareList.Add(dataAnalysisShare);
+        }
+        // foreach (var emp in employees)
+        //     Console.WriteLine($"{emp.Name} - {emp.Company} ({emp.Language})");
+        return dataAnalysisShareList;
     }
 
 }

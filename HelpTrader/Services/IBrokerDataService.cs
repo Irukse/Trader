@@ -13,4 +13,8 @@ public interface IBrokerDataService
     public Task<List<ShareData>> GetListDataFigiShareAsync(List<string> share);
 
     public Task<SharePrice> GetPriceShareAsync(string figi);
+
+    public Task<List<SharePrice>> GetPriceShareListAsync(List<string> figiList);
+
+    public Task<List<DataAnalysisShare>> GetAnalysisShareAsync(List<string> share);
 }
