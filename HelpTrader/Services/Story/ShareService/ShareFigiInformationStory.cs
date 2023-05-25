@@ -1,4 +1,6 @@
 using HelpTrader.Models;
+using HelpTrader.Services.Application.Manager.Repository;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HelpTrader.Services.Story.ShareService;
 
@@ -16,29 +18,53 @@ public record ShareFigiInformationStoryContext : IStoryContext<ShareFigiInformat
 public class ShareFigiInformationStory : BaseStory<ShareFigiInformationStoryContext, ShareFigiInformationResponse>
 {
     private readonly ISimulatorBrokerClient _client;
+    private readonly IBasketRepository _repository;
 
-    public ShareFigiInformationStory(ISimulatorBrokerClient client)
+    public ShareFigiInformationStory(ISimulatorBrokerClient client, IBasketRepository repository)
     {
         _client = client;
+        _repository = repository;
     }
 
     /// <inheritdoc />
     protected override  async Task<ShareFigiInformationResponse> DoAsync(ShareFigiInformationStoryContext context)
     {
-        var shareDataList = new ShareFigiInformationResponse(){};
-        var dfbvv = new List<ShareData>();
+        var response = new ShareFigiInformationResponse(){};
+        var sharesData = new List<ShareData>();
+        
         foreach (var share in context.Shares)
         {
-            var data = await _client.GetDataFigiForShareAsync<List<string>>(share);
-            var brokerData = new ShareData()
+            var dataFromCash = await _repository.GetBasket(share);
+
+            if (dataFromCash != null)
             {
-                NameShare = data[0],
-                Figi = data[1],
-            };
-            dfbvv.Add(brokerData);
+                sharesData.Add(dataFromCash);
+            }
+
+            else
+            {
+                var data = await _client.GetDataFigiForShareAsync<List<string>>(share);
+                var brokerData = new ShareData()
+                {
+                    NameShare = data[0],
+                    Figi = data[1],
+                };
+                sharesData.Add(brokerData);
+                await _repository.UpdateBasket(brokerData);
+            }
             
+            
+            // var data = await _client.GetDataFigiForShareAsync<List<string>>(share);
+            // var brokerData = new ShareData()
+            // {
+            //     NameShare = data[0],
+            //     Figi = data[1],
+            // };
+            // dfbvv.Add(brokerData);
+            // await _repository.UpdateBasket(brokerData);
         }
-        shareDataList.Shares = dfbvv;
-        return shareDataList;
+        response.Shares = sharesData;
+        
+        return response;
     }
 }

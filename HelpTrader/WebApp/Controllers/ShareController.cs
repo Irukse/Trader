@@ -1,5 +1,6 @@
 using System.Net.Mime;
 using bgTeam;
+using HelpTrader.Services.Application.Manager.Repository;
 using HelpTrader.Services.Story;
 using HelpTrader.Services.Story.ShareService;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +14,7 @@ namespace HelpTrader.WebApp.Controllers;
 public class ShareController : ControllerBase
 {
     private readonly IStoryBuilder _storyBuilder;
-
+    private readonly IBasketRepository _repository;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BlacklistedEmailsController"/> class.
@@ -21,9 +22,10 @@ public class ShareController : ControllerBase
     /// <param name="languageService"></param>
     /// <param name="storyBuilder"></param>
     /// <param name="queryBuilder"></param>
-    public ShareController(IStoryBuilder storyBuilder)
+    public ShareController(IStoryBuilder storyBuilder, IBasketRepository repository)
     {
         _storyBuilder = storyBuilder;
+        _repository = repository;
     }
 
     // [HttpGet("[action]")]

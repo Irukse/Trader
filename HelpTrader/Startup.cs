@@ -1,4 +1,5 @@
 using HelpTrader.Services;
+using HelpTrader.Services.Application.Manager.Repository;
 using HelpTrader.WebApp;
 
 namespace HelpTrader;
@@ -6,7 +7,7 @@ namespace HelpTrader;
 public class Startup
 {
     public IConfiguration Configuration { get; }
-  //  public IWebHostEnvironment WebHostEnvironment { get; }
+
     public Startup(IConfiguration config)
     {
         Configuration = config;
@@ -21,7 +22,11 @@ public class Startup
         services.AddRazorPages();
         services.AddRouting();
         services.AddControllers();
-        
+        services.AddStackExchangeRedisCache(options => 
+        { 
+            options.Configuration = Configuration.GetValue<string>("CacheSettings:ConnectionString"); 
+        });
+ 
         DiSetup(services);
     }
 
@@ -29,6 +34,7 @@ public class Startup
     {
         services.AddHelpTraderServices();
         services.AddScoped<IBrokerDataService, BrokerDataService>();
+        services.AddScoped<IBasketRepository, BasketRepository>();
         services.AddScoped<ISimulatorBrokerClient, SimulatorBrokerClient>();
     }
     
