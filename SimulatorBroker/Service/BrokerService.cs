@@ -83,18 +83,32 @@ public class BrokerService : IBrokerService
         return null;
     }
 
-    public decimal? GetPrice(string figi)
+    public List<object> GetPrice(string figi)
     {
         var priceF = new decimal(_price.Next(10, 15));
-        
+        var priceFFFF =  0.39999999999999997M;
         var priceL = new decimal(_price.Next(20, 25));
+        
+        
         if (figi.Equals("FIGIFORD"))
         {
-            return priceF;
+            var brokerData = new List<object>()
+            {
+                figi,
+                priceFFFF
+            };
+        
+            return brokerData;
         }
         if (figi.Equals("FIGILADA"))
         {
-            return priceL;
+            var brokerData = new List<object>()
+            {
+                figi,
+                priceL
+            };
+        
+            return brokerData;
         }
 
         return null;

@@ -42,7 +42,7 @@ public class BrokerController : ControllerBase
     [HttpGet]
     [Route("BrokerData/Price/{figi}")]
     [Consumes(MediaTypeNames.Application.Json)]
-    public decimal? GetPriceShares([FromRoute]string figi)
+    public List<object> GetPriceShares([FromRoute]string figi)
     {
         return _service.GetPrice(figi);
     }

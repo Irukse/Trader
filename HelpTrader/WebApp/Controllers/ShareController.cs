@@ -14,7 +14,7 @@ namespace HelpTrader.WebApp.Controllers;
 public class ShareController : ControllerBase
 {
     private readonly IStoryBuilder _storyBuilder;
-    private readonly IBasketRepository _repository;
+    private readonly IRedisRepository _repository;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BlacklistedEmailsController"/> class.
@@ -22,7 +22,7 @@ public class ShareController : ControllerBase
     /// <param name="languageService"></param>
     /// <param name="storyBuilder"></param>
     /// <param name="queryBuilder"></param>
-    public ShareController(IStoryBuilder storyBuilder, IBasketRepository repository)
+    public ShareController(IStoryBuilder storyBuilder, IRedisRepository repository)
     {
         _storyBuilder = storyBuilder;
         _repository = repository;
@@ -30,7 +30,7 @@ public class ShareController : ControllerBase
 
     // [HttpGet("[action]")]
     //
-  //  [Consumes(MediaTypeNames.Application.Json)]
+    //  [Consumes(MediaTypeNames.Application.Json)]
     // [HttpGet("[action]")]
     // [Consumes(MediaTypeNames.Application.Json)]
     // public async Task<ShareFigiInformationResponse> GetListFigiInformation(List<string> shares)
@@ -42,11 +42,11 @@ public class ShareController : ControllerBase
     //    // return await _storyBuilder.Build(context).ReturnAsync<ShareFigiInformationResponse>();
     //     return await _storyBuilder.ReturnAsync<ShareFigiInformationStoryContext, ShareFigiInformationResponse>(context);
     // }
-    
-    
-[HttpGet("logs")]
-[Consumes(MediaTypeNames.Application.Json)]
-    public async Task<ShareFigiInformationResponse> GetListFigiInformationk([FromQuery]List<string> shares)
+
+
+    [HttpGet("FigiInformation")]
+    [Consumes(MediaTypeNames.Application.Json)]
+    public async Task<ShareFigiInformationResponse> GetListFigiInformation([FromQuery] List<string> shares)
     {
         var context = new ShareFigiInformationStoryContext()
         {
@@ -54,5 +54,29 @@ public class ShareController : ControllerBase
         };
         return await _storyBuilder.ReturnAsync<ShareFigiInformationStoryContext, ShareFigiInformationResponse>(context);
     }
+    
+    [HttpGet("PriseInformation")]
+    [Consumes(MediaTypeNames.Application.Json)]
+    public async Task<SharePriceInformationResponse> GetListPriseInformation([FromQuery] List<string> figi)
+    {
+        var context = new SharePriceInformationStoryContext()
+        {
+            Figi = figi
+        };
+        return await _storyBuilder.ReturnAsync<SharePriceInformationStoryContext, SharePriceInformationResponse>(context);
+    }
+    
+    [HttpGet("AnalysisFair")]
+    [Consumes(MediaTypeNames.Application.Json)]
+    public async Task<ShareAnalysisFairPriseResponse> GetListAnalysisFairInformation([FromQuery] List<string> share)
+    {
+        var context = new ShareAnalysisFairPriseStoryContext()
+        {
+           Share = share
+        };
+        return await _storyBuilder.ReturnAsync<ShareAnalysisFairPriseStoryContext, ShareAnalysisFairPriseResponse>(context);
+    }
 }
+
+
 

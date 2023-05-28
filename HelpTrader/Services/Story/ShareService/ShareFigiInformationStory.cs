@@ -1,11 +1,10 @@
 using HelpTrader.Models;
 using HelpTrader.Services.Application.Manager.Repository;
-using Microsoft.AspNetCore.Mvc;
 
 namespace HelpTrader.Services.Story.ShareService;
 
 /// <summary>
-/// Context for query to get figi
+/// Context for <inheritdoc cref="ShareFigiInformationStory"/>
 /// </summary>
 public record ShareFigiInformationStoryContext : IStoryContext<ShareFigiInformationResponse>
 {
@@ -13,14 +12,14 @@ public record ShareFigiInformationStoryContext : IStoryContext<ShareFigiInformat
 }
 
 /// <summary>
-/// story for get figi
+/// Story for get figi
 /// </summary>
 public class ShareFigiInformationStory : BaseStory<ShareFigiInformationStoryContext, ShareFigiInformationResponse>
 {
     private readonly ISimulatorBrokerClient _client;
-    private readonly IBasketRepository _repository;
+    private readonly IRedisRepository _repository;
 
-    public ShareFigiInformationStory(ISimulatorBrokerClient client, IBasketRepository repository)
+    public ShareFigiInformationStory(ISimulatorBrokerClient client, IRedisRepository repository)
     {
         _client = client;
         _repository = repository;
@@ -34,34 +33,33 @@ public class ShareFigiInformationStory : BaseStory<ShareFigiInformationStoryCont
         
         foreach (var share in context.Shares)
         {
-            var dataFromCash = await _repository.GetBasket(share);
+            // var dataFromCash = await _repository.GetBasket<ShareData>(share);
+            //
+            // if (dataFromCash != null)
+            // {
+            //     sharesData.Add((ShareData)dataFromCash);
+            // }
 
-            if (dataFromCash != null)
-            {
-                sharesData.Add(dataFromCash);
-            }
-
-            else
-            {
+        //    else
+        //    {
                 var data = await _client.GetDataFigiForShareAsync<List<string>>(share);
+                //от брокера получаем сообщение такого формата:
+                // {
+                //"ticket" : "SBER",
+                //"figi" : "BBG004730N88",
+                //"name" : "Сбер Банк",
+                //"type" : "stock",
+                //"currency" : "RUB",
+                //"source" : "TINKOFF"
+                // }
                 var brokerData = new ShareData()
                 {
-                    NameShare = data[0],
+                    Ticker = data[0],
                     Figi = data[1],
                 };
                 sharesData.Add(brokerData);
-                await _repository.UpdateBasket(brokerData);
-            }
-            
-            
-            // var data = await _client.GetDataFigiForShareAsync<List<string>>(share);
-            // var brokerData = new ShareData()
-            // {
-            //     NameShare = data[0],
-            //     Figi = data[1],
-            // };
-            // dfbvv.Add(brokerData);
-            // await _repository.UpdateBasket(brokerData);
+               // await _repository.UpdateBasket(brokerData);
+          //  }
         }
         response.Shares = sharesData;
         

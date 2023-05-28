@@ -67,6 +67,7 @@ public class BrokerDataService : IBrokerDataService
     // }
 
     //work method олучение фиджи по абревиатуре акции
+    // обработано
     public  Task<List<ShareData>> GetListDataFigiShareAsync(List<string> share)
     {
         var shareDataList = new List<ShareData>();
@@ -77,7 +78,7 @@ public class BrokerDataService : IBrokerDataService
                 // возможно не успевает записать 
                 var brokerData = new ShareData()
                 {
-                    NameShare = data[0],
+                    Ticker = data[0],
                     Figi = data[1],
                 };
                 shareDataList.Add(brokerData);
@@ -134,7 +135,7 @@ public class BrokerDataService : IBrokerDataService
 
         var dataAnalysisShares = from sd in shareData
             join cp in sharePrice on sd.Figi equals cp.Figi
-            select new  { Name = sd.NameShare, Price = cp.Price };
+            select new  { Name = sd.Ticker, Price = cp.Price };
 
         foreach (var VARIABLE in dataAnalysisShares)
         {

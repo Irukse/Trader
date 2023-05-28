@@ -24,7 +24,7 @@ public class Startup
         services.AddControllers();
         services.AddStackExchangeRedisCache(options => 
         { 
-            options.Configuration = Configuration.GetValue<string>("CacheSettings:ConnectionString"); 
+            options.Configuration = Configuration.GetValue<string>("CacheSettings:ConnectionString");
         });
  
         DiSetup(services);
@@ -34,7 +34,7 @@ public class Startup
     {
         services.AddHelpTraderServices();
         services.AddScoped<IBrokerDataService, BrokerDataService>();
-        services.AddScoped<IBasketRepository, BasketRepository>();
+        services.AddScoped<IRedisRepository, RedisRepository>();
         services.AddScoped<ISimulatorBrokerClient, SimulatorBrokerClient>();
     }
     
