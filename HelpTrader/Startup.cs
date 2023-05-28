@@ -33,7 +33,6 @@ public class Startup
     protected virtual void DiSetup(IServiceCollection services)
     {
         services.AddHelpTraderServices();
-        services.AddScoped<IBrokerDataService, BrokerDataService>();
         services.AddScoped<IRedisRepository, RedisRepository>();
         services.AddScoped<ISimulatorBrokerClient, SimulatorBrokerClient>();
     }
