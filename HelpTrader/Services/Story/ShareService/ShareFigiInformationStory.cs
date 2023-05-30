@@ -1,4 +1,4 @@
-using HelpTrader.Models;
+using HelpTrader.Domain.Dto;
 using HelpTrader.Services.Application.Manager.Repository;
 
 namespace HelpTrader.Services.Story.ShareService;
@@ -18,6 +18,7 @@ public class ShareFigiInformationStory : BaseStory<ShareFigiInformationStoryCont
 {
     private readonly ISimulatorBrokerClient _client;
     private readonly IRedisRepository _repository;
+   
 
     public ShareFigiInformationStory(ISimulatorBrokerClient client, IRedisRepository repository)
     {
@@ -26,22 +27,23 @@ public class ShareFigiInformationStory : BaseStory<ShareFigiInformationStoryCont
     }
 
     /// <inheritdoc />
-    protected override  async Task<ShareFigiInformationResponse> DoAsync(ShareFigiInformationStoryContext context)
+    protected override async Task<ShareFigiInformationResponse> DoAsync(ShareFigiInformationStoryContext context)
     {
-        var response = new ShareFigiInformationResponse(){};
+        var response = new ShareFigiInformationResponse() { };
         var sharesData = new List<ShareData>();
-        
+      
+
         foreach (var share in context.Shares)
         {
-            // var dataFromCash = await _repository.GetBasket<ShareData>(share);
-            //
-            // if (dataFromCash != null)
-            // {
-            //     sharesData.Add((ShareData)dataFromCash);
-            // }
+            var dataFromCash = await _repository.GetBasket<ShareData>(share);
 
-        //    else
-        //    {
+            if (dataFromCash != null)
+            {
+                sharesData.Add((ShareData)dataFromCash);
+            }
+
+            else
+            {
                 var data = await _client.GetDataFigiForShareAsync<List<string>>(share);
                 //от брокера получаем сообщение такого формата:
                 // {
@@ -58,11 +60,12 @@ public class ShareFigiInformationStory : BaseStory<ShareFigiInformationStoryCont
                     Figi = data[1],
                 };
                 sharesData.Add(brokerData);
-               // await _repository.UpdateBasket(brokerData);
-          //  }
+                await _repository.UpdateBasket(share, brokerData);
+            }
         }
+
         response.Shares = sharesData;
-        
+
         return response;
     }
 }

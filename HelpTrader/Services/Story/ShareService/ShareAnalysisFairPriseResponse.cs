@@ -1,4 +1,4 @@
-using HelpTrader.Models;
+using HelpTrader.Domain.Dto;
 
 namespace HelpTrader.Services.Story.ShareService;
 
@@ -7,5 +7,5 @@ namespace HelpTrader.Services.Story.ShareService;
 /// </summary>
 public class ShareAnalysisFairPriseResponse
 {
-   public List<DataAnalysisShare> FairPrise { get; set; }
+   public List<DataAnalysisShare> FairPrises { get; set; }
 }

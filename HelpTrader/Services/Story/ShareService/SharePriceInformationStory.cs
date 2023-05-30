@@ -1,9 +1,8 @@
 using System.Globalization;
-using HelpTrader.Models;
+using HelpTrader.Domain.Dto;
 using HelpTrader.Services.Application.Manager.Repository;
 
 namespace HelpTrader.Services.Story.ShareService;
-
 
 /// <summary>
 /// Context for <inheritdoc cref="SharePriceInformationStory"/>
@@ -31,21 +30,20 @@ public class SharePriceInformationStory : BaseStory<SharePriceInformationStoryCo
     /// <inheritdoc />
     protected override async Task<SharePriceInformationResponse> DoAsync(SharePriceInformationStoryContext context)
     {
-        
         var brokerDataList = new List<SharePrice>();
-        var response = new SharePriceInformationResponse(){};
+        var response = new SharePriceInformationResponse() { };
 
         foreach (var figi in context.Figi)
         {
-            // var dataFromCash = await _repository.GetBasket<SharePrice>(figi);
-            //
-            // if (dataFromCash != null)
-            // {
-            //     brokerDataList.Add((SharePrice)dataFromCash);
-            // }
+            var dataFromCash = await _repository.GetBasket<SharePrice>(figi);
 
-       //     else
-       //     {
+            if (dataFromCash != null)
+            {
+                brokerDataList.Add((SharePrice)dataFromCash);
+            }
+
+            else
+            {
                 var data = await _client.GetPriceForShareAsync<List<object>>(figi);
                 //от брокера получаем сообщение такого формата:
                 // {
@@ -55,8 +53,8 @@ public class SharePriceInformationStory : BaseStory<SharePriceInformationStoryCo
                 var one = data[0];
                 var two = data[1].ToString();
 
-               CultureInfo cultures = new CultureInfo("en-US");
-               decimal priceVal = Convert.ToDecimal(two, cultures);
+                CultureInfo cultures = new CultureInfo("en-US");
+                decimal priceVal = Convert.ToDecimal(two, cultures);
 
                 var brokerData = new SharePrice()
                 {
@@ -64,12 +62,12 @@ public class SharePriceInformationStory : BaseStory<SharePriceInformationStoryCo
                     Price = priceVal,
                 };
                 brokerDataList.Add(brokerData);
-              //  await _repository.UpdateBasket(brokerData);
-          //  }
+                await _repository.UpdateBasket(figi, brokerData);
+            }
         }
-      
+
         response.Prices = brokerDataList;
-        
+
         return response;
     }
 }

@@ -1,4 +1,4 @@
-namespace HelpTrader.Models;
+namespace HelpTrader.Domain;
 
 public class ErrorViewModel
 {

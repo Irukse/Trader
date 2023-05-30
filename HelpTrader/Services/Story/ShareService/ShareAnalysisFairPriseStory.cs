@@ -1,5 +1,5 @@
 using bgTeam;
-using HelpTrader.Models;
+using HelpTrader.Domain.Dto;
 using HelpTrader.Services.Application.Manager.Repository;
 
 namespace HelpTrader.Services.Story.ShareService;
@@ -9,7 +9,7 @@ namespace HelpTrader.Services.Story.ShareService;
 /// </summary>
 public record ShareAnalysisFairPriseStoryContext : IStoryContext<ShareAnalysisFairPriseResponse>
 {
-    public List<string> Share { get; init; }
+    public List<string> Shares { get; init; }
 }
 
 /// <summary>
@@ -47,14 +47,14 @@ public class ShareAnalysisFairPriseStory : BaseStory<ShareAnalysisFairPriseStory
         {
             var dataAnalysisShare = new DataAnalysisShare()
             {
-                Name = data.Name,
+                TickerShare = data.Name,
                 Price = data.Price,
                 FairPrice = data.Price * 3,
             };
             dataAnalysisShareList.Add(dataAnalysisShare);
         }
 
-        response.FairPrise = dataAnalysisShareList;
+        response.FairPrises = dataAnalysisShareList;
 
         return response;
     }
@@ -68,7 +68,7 @@ public class ShareAnalysisFairPriseStory : BaseStory<ShareAnalysisFairPriseStory
     {
         var cont = new ShareFigiInformationStoryContext()
         {
-            Shares = context.Share
+            Shares = context.Shares
         };
         
         var shareData = await _storyBuilder.ReturnAsync<ShareFigiInformationStoryContext, ShareFigiInformationResponse>(cont);

@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
+using HelpTrader.Domain;
 using Microsoft.AspNetCore.Mvc;
-using HelpTrader.Models;
 
 namespace HelpTrader.Controllers;
 

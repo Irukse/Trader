@@ -1,3 +1,4 @@
+using bgTeam;
 using HelpTrader.Services;
 using HelpTrader.Services.Application.Manager.Repository;
 using HelpTrader.WebApp;
@@ -32,9 +33,11 @@ public class Startup
 
     protected virtual void DiSetup(IServiceCollection services)
     {
-        services.AddHelpTraderServices();
+       // services.AddHelpTraderServices();
+        services.StoryBuilderServices();
         services.AddScoped<IRedisRepository, RedisRepository>();
         services.AddScoped<ISimulatorBrokerClient, SimulatorBrokerClient>();
+        services.AddScoped<IStoryBuilder, StoryBuilder>();
     }
     
     public void Configure(WebApplication app) {

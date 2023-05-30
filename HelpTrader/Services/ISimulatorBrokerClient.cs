@@ -1,5 +1,3 @@
-using HelpTrader.Models;
-
 namespace HelpTrader.Services;
 
 public interface ISimulatorBrokerClient

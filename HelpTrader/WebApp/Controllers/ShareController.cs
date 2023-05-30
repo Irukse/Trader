@@ -53,7 +53,7 @@ public class ShareController : ControllerBase
     {
         var context = new ShareAnalysisFairPriseStoryContext()
         {
-            Share = share
+            Shares = share
         };
         return await _storyBuilder.ReturnAsync<ShareAnalysisFairPriseStoryContext, ShareAnalysisFairPriseResponse>(context);
     }

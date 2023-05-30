@@ -1,9 +1,10 @@
-using HelpTrader.Models;
 namespace HelpTrader.Services.Application.Manager.Repository;
 
     public interface IRedisRepository
     {
         Task<object> GetBasket<T>(string userName);
-        Task UpdateBasket(object basket);
+        
+        public Task UpdateBasket<T>(string key, T share);
+        
         Task DeleteBasket(string share);
     }
