@@ -1,0 +1,10 @@
+﻿{
+  "profiles": {
+    "HelpTrader.Migrations": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Debug"
+      }
+    }
+  }
+}

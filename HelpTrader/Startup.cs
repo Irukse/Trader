@@ -2,6 +2,7 @@ using bgTeam;
 using HelpTrader.Services;
 using HelpTrader.Services.Application.Manager.Repository;
 using HelpTrader.WebApp;
+using Tinkoff.InvestApi;
 
 namespace HelpTrader;
 
@@ -27,7 +28,12 @@ public class Startup
         { 
             options.Configuration = Configuration.GetValue<string>("CacheSettings:ConnectionString");
         });
- 
+        services.AddInvestApiClient((_, settings) => settings.AccessToken = "t.aINJV2rM2UtW1kcLifeVfV1r2nrq1ZH8BGNRpOldRf8-WJ1qMT8MuMe5iDKcL_KLRlvz5ejlH97IRlpnUDbSLg");
+        // var serviceProvider = services.BuildServiceProvider();
+        //
+        // var client = serviceProvider.GetRequiredService<InvestApiClient>();
+        //
+        // var stream = client.MarketDataStream.MarketDataStream();
         DiSetup(services);
     }
 

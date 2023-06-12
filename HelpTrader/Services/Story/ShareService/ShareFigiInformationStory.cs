@@ -1,5 +1,8 @@
 using HelpTrader.Domain.Dto;
 using HelpTrader.Services.Application.Manager.Repository;
+using Tinkoff.InvestApi;
+using Tinkoff.InvestApi.V1;
+using Tinkoff.Trading.OpenApi.Network;
 
 namespace HelpTrader.Services.Story.ShareService;
 
@@ -18,20 +21,26 @@ public class ShareFigiInformationStory : BaseStory<ShareFigiInformationStoryCont
 {
     private readonly ISimulatorBrokerClient _client;
     private readonly IRedisRepository _repository;
-   
-
-    public ShareFigiInformationStory(ISimulatorBrokerClient client, IRedisRepository repository)
+    private readonly InvestApiClient _investApiClient;
+    public ShareFigiInformationStory(ISimulatorBrokerClient client, IRedisRepository repository, InvestApiClient investApiClient)
     {
         _client = client;
         _repository = repository;
+        _investApiClient = investApiClient;
     }
 
     /// <inheritdoc />
     protected override async Task<ShareFigiInformationResponse> DoAsync(ShareFigiInformationStoryContext context)
     {
+        
+      //  var token = "my.token";
+// для работы в песочнице используйте GetSandboxConnection
+    //    var connection = ConnectionFactory.GetSandboxConnection(token);
+       // var contextTin = connection.Context;
+       // var portfolio = await contextTin.PortfolioAsync();
+       
         var response = new ShareFigiInformationResponse() { };
         var sharesData = new List<ShareData>();
-      
 
         foreach (var share in context.Shares)
         {
@@ -44,7 +53,25 @@ public class ShareFigiInformationStory : BaseStory<ShareFigiInformationStoryCont
 
             else
             {
-                var data = await _client.GetDataFigiForShareAsync<List<string>>(share);
+                /////////////
+                var instrumentForInfoAboutShare = new InstrumentRequest()
+                {
+                    IdType = InstrumentIdType.Ticker,
+                    Id = "CNX",
+                    ClassCode = "SPBXM"
+                };
+                var bbbb = _investApiClient.Instruments.ShareBy(instrumentForInfoAboutShare);
+                
+                
+               // var data = await _client.GetDataFigiForShareAsync<List<string>>(share);
+                var d = _investApiClient.Instruments.Shares();
+                
+
+                var getLastPricesRequest = new GetLastPricesRequest
+                {
+                    InstrumentId = { "BBG000CKVSG8" }
+                };
+                var g = _investApiClient.MarketData.GetLastPrices(getLastPricesRequest);
                 //от брокера получаем сообщение такого формата:
                 // {
                 //"ticket" : "SBER",
@@ -56,8 +83,8 @@ public class ShareFigiInformationStory : BaseStory<ShareFigiInformationStoryCont
                 // }
                 var brokerData = new ShareData()
                 {
-                    Ticker = data[0],
-                    Figi = data[1],
+                 //   Ticker = data[0],
+                 //   Figi = data[1],
                 };
                 sharesData.Add(brokerData);
                 await _repository.UpdateBasket(share, brokerData);
