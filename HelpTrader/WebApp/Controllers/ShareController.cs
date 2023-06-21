@@ -1,5 +1,7 @@
 using System.Net.Mime;
 using bgTeam;
+using Google.Protobuf.Collections;
+using HelpTrader.Domain.Dto;
 using HelpTrader.Services.Application.Manager.Repository;
 using HelpTrader.Services.Story;
 using HelpTrader.Services.Story.ShareService;
@@ -25,36 +27,14 @@ public class ShareController : ControllerBase
         _repository = repository;
     }
 
-    [HttpGet("FigiInformation")]
-    [Consumes(MediaTypeNames.Application.Json)]
-    public async Task<ShareFigiInformationResponse> GetListFigiInformation([FromQuery] List<string> shares)
-    {
-        var context = new ShareFigiInformationStoryContext()
-        {
-            Shares = shares
-        };
-        return await _storyBuilder.ReturnAsync<ShareFigiInformationStoryContext, ShareFigiInformationResponse>(context);
-    }
-
     [HttpGet("PriceInformation")]
     [Consumes(MediaTypeNames.Application.Json)]
-    public async Task<SharePriceInformationResponse> GetListPriseInformation([FromQuery] List<string> figi)
+    public async Task<List<SharePrice>> GetListPriseInformation([FromQuery] RepeatedField<string> figi)
     {
         var context = new SharePriceInformationStoryContext()
         {
-            Figi = figi
+             Figi = figi
         };
-        return await _storyBuilder.ReturnAsync<SharePriceInformationStoryContext, SharePriceInformationResponse>(context);
-    }
-
-    [HttpGet("AnalysisFair")]
-    [Consumes(MediaTypeNames.Application.Json)]
-    public async Task<ShareAnalysisFairPriseResponse> GetListAnalysisFairInformation([FromQuery] List<string> share)
-    {
-        var context = new ShareAnalysisFairPriseStoryContext()
-        {
-            Shares = share
-        };
-        return await _storyBuilder.ReturnAsync<ShareAnalysisFairPriseStoryContext, ShareAnalysisFairPriseResponse>(context);
+        return await _storyBuilder.ReturnAsync<SharePriceInformationStoryContext, List<SharePrice>>(context);
     }
 }

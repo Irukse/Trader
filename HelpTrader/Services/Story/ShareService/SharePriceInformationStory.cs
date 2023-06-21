@@ -1,73 +1,47 @@
-using System.Globalization;
+using Google.Protobuf.Collections;
 using HelpTrader.Domain.Dto;
 using HelpTrader.Services.Application.Manager.Repository;
+using Tinkoff.InvestApi;
+using Tinkoff.InvestApi.V1;
 
 namespace HelpTrader.Services.Story.ShareService;
 
 /// <summary>
 /// Context for <inheritdoc cref="SharePriceInformationStory"/>
 /// </summary>
-public record SharePriceInformationStoryContext : IStoryContext<SharePriceInformationResponse>
+public record SharePriceInformationStoryContext : IStoryContext<List<SharePrice>>
 {
-    public List<string> Figi { get; init; }
+    public RepeatedField<string> Figi { get; init; }
 }
 
 /// <summary>
 /// Get price by figi
 /// </summary>
-public class SharePriceInformationStory : BaseStory<SharePriceInformationStoryContext, SharePriceInformationResponse>
+public class SharePriceInformationStory : BaseStory<SharePriceInformationStoryContext, List<SharePrice>>
 {
-    private readonly ISimulatorBrokerClient _client;
+    private readonly InvestApiClient _investApiClient;
     private readonly IRedisRepository _repository;
 
-
-    public SharePriceInformationStory(ISimulatorBrokerClient client, IRedisRepository repository)
+    public SharePriceInformationStory(IRedisRepository repository, InvestApiClient investApiClient)
     {
-        _client = client;
         _repository = repository;
+        _investApiClient = investApiClient;
     }
 
     /// <inheritdoc />
-    protected override async Task<SharePriceInformationResponse> DoAsync(SharePriceInformationStoryContext context)
+    protected override async Task<List<SharePrice>> DoAsync(SharePriceInformationStoryContext context)
     {
-        var brokerDataList = new List<SharePrice>();
-        var response = new SharePriceInformationResponse() { };
-
-        foreach (var figi in context.Figi)
+        var getLastPricesRequest = new GetLastPricesRequest
         {
-            var dataFromCash = await _repository.GetBasket<SharePrice>(figi);
+            InstrumentId = { context.Figi }
+        };
 
-            if (dataFromCash != null)
-            {
-                brokerDataList.Add((SharePrice)dataFromCash);
-            }
+        var lastPrices = await _investApiClient.MarketData.GetLastPricesAsync(getLastPricesRequest);
 
-            else
-            {
-                var data = await _client.GetPriceForShareAsync<List<object>>(figi);
-                //от брокера получаем сообщение такого формата:
-                // {
-                //"figi" : "BBG004730N88",
-                //"price" : "111.1"
-                // }
-                var one = data[0];
-                var two = data[1].ToString();
-
-                CultureInfo cultures = new CultureInfo("en-US");
-                decimal priceVal = Convert.ToDecimal(two, cultures);
-
-                var brokerData = new SharePrice()
-                {
-                    Figi = one.ToString(), // если объекты придут в другом порядке...
-                    Price = priceVal,
-                };
-                brokerDataList.Add(brokerData);
-                await _repository.UpdateBasket(figi, brokerData);
-            }
-        }
-
-        response.Prices = brokerDataList;
-
-        return response;
+        var brokerDataList = lastPrices.LastPrices
+            .Select(lastPrice => new SharePrice() 
+                { Figi = lastPrice.Figi, LastPrices = lastPrice.Price, Time = lastPrice.Time.ToDateTime()}).ToList();
+        
+        return brokerDataList;
     }
 }

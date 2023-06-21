@@ -1,14 +1,16 @@
 using bgTeam;
+using bgTeam.DataAccess;
 using HelpTrader.Services;
 using HelpTrader.Services.Application.Manager.Repository;
-using HelpTrader.WebApp;
-using Tinkoff.InvestApi;
+using bgTeam.DataAccess.Impl;
+using bgTeam.DataAccess.Impl.Dapper;
+using bgTeam.DataAccess.Impl.PostgreSQL;
 
 namespace HelpTrader;
 
-public class Startup
+public sealed class Startup
 {
-    public IConfiguration Configuration { get; }
+    private IConfiguration Configuration { get; }
 
     public Startup(IConfiguration config)
     {
@@ -28,25 +30,26 @@ public class Startup
         { 
             options.Configuration = Configuration.GetValue<string>("CacheSettings:ConnectionString");
         });
-        services.AddInvestApiClient((_, settings) => settings.AccessToken = "t.aINJV2rM2UtW1kcLifeVfV1r2nrq1ZH8BGNRpOldRf8-WJ1qMT8MuMe5iDKcL_KLRlvz5ejlH97IRlpnUDbSLg");
-        // var serviceProvider = services.BuildServiceProvider();
-        //
-        // var client = serviceProvider.GetRequiredService<InvestApiClient>();
-        //
-        // var stream = client.MarketDataStream.MarketDataStream();
+        services.AddInvestApiClient((_, settings) => settings.AccessToken = "на этом месте мог быть Ваш токен :)");
+
         DiSetup(services);
     }
 
-    protected virtual void DiSetup(IServiceCollection services)
+    private void DiSetup(IServiceCollection services)
     {
-       // services.AddHelpTraderServices();
         services.StoryBuilderServices();
         services.AddScoped<IRedisRepository, RedisRepository>();
         services.AddScoped<ISimulatorBrokerClient, SimulatorBrokerClient>();
         services.AddScoped<IStoryBuilder, StoryBuilder>();
+        services.AddScoped<IQueryBuilder, QueryBuilder>();
+        
+        services.AddSingleton<IConnectionSetting, ConnectionSettings>();
+        services.AddSingleton<ISqlDialect, SqlDialectWithUnderscoresDapper>();
+        services.AddSingleton<ICrudService, CrudServiceDapper>();
+        services.AddSingleton<IConnectionFactory, ConnectionFactoryPostgreSQL>();
     }
     
-    public void Configure(WebApplication app) {
+    public static void Configure(WebApplication app) {
         if (!app.Environment.IsDevelopment())
         {
             app.UseSwagger();
