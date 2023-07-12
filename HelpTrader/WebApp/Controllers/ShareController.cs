@@ -37,4 +37,11 @@ public class ShareController : ControllerBase
         };
         return await _storyBuilder.ReturnAsync<SharePriceInformationStoryContext, List<SharePrice>>(context);
     }
+    
+    [HttpGet("TechnicalAnalysisInformation")]
+    [Consumes(MediaTypeNames.Application.Json)]
+    public async Task<TechnicalAnalysisResponse> GetTechnicalAnalysisInformation([FromQuery] TechnicalAnalysisStoryContext context)
+    {
+        return await _storyBuilder.ReturnAsync<TechnicalAnalysisStoryContext, TechnicalAnalysisResponse>(context);
+    }
 }

@@ -7,7 +7,7 @@ namespace HelpTrader.Services.Queries;
 /// context for <inheritdoc cref="GetFigiQuery"/>
 /// </summary>
 /// <param name="tiskers"></param>
-public record GetFigiQueryContext(IEnumerable<string> tiskers) : IQueryContext<IEnumerable<ShareData>>;
+public record GetFigiQueryContext(IEnumerable<string> tickers) : IQueryContext<IEnumerable<ShareData>>;
 
 /// <summary>
 /// query for get figi
@@ -15,25 +15,34 @@ public record GetFigiQueryContext(IEnumerable<string> tiskers) : IQueryContext<I
 public class GetFigiQuery : BaseQuery<GetFigiQueryContext, IEnumerable<ShareData>>
 {
     private readonly ICrudService _crudService;
-
-    public GetFigiQuery(ICrudService crudService)
+    private readonly IConnectionFactory _connectionFactory;
+    public GetFigiQuery(ICrudService crudService, IConnectionFactory connectionFactory)
     {
         _crudService = crudService;
+        _connectionFactory = connectionFactory;
     }
     
     private readonly string GET_FIGI_SHARES_QUERY = $@"
-SELECT tisker, figi
+SELECT ticker, figi
 FROM shares
-WHERE tisker=ANY(@tiskers)
+WHERE ticker=ANY(@tickers)
 ";
 
-    public override Task<IEnumerable<ShareData>> ExecuteAsync(GetFigiQueryContext context)
+    public override async Task<IEnumerable<ShareData>> ExecuteAsync(GetFigiQueryContext context)
     {
-        return _crudService.GetAllAsync<ShareData>(
+        using var connection = await _connectionFactory.CreateAsync();
+        using var transaction = connection.BeginTransaction();
+        
+        var result = await _crudService.GetAllAsync<ShareData>(
             GET_FIGI_SHARES_QUERY,
             new
             {
-                context.tiskers
+                context.tickers
             });
+        
+        transaction.Commit();
+        connection.Close();
+
+        return result;
     }
 }

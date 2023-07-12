@@ -30,7 +30,7 @@ public sealed class Startup
         { 
             options.Configuration = Configuration.GetValue<string>("CacheSettings:ConnectionString");
         });
-        services.AddInvestApiClient((_, settings) => settings.AccessToken = "на этом месте мог быть Ваш токен :)");
+        services.AddInvestApiClient((_, settings) => settings.AccessToken = "");
 
         DiSetup(services);
     }
@@ -50,6 +50,7 @@ public sealed class Startup
     }
     
     public static void Configure(WebApplication app) {
+      //  var svc = ((IApplicationBuilder)app).ApplicationServices.GetService<IService>(); // no exception
         if (!app.Environment.IsDevelopment())
         {
             app.UseSwagger();
