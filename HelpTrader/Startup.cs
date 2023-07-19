@@ -1,13 +1,11 @@
 using System.Text.Json.Serialization;
 using bgTeam;
 using bgTeam.DataAccess;
-using HelpTrader.Services;
 using HelpTrader.Services.Application.Manager.Repository;
 using bgTeam.DataAccess.Impl;
 using bgTeam.DataAccess.Impl.Dapper;
 using bgTeam.DataAccess.Impl.PostgreSQL;
 using HelpTrader.Services.Analysis;
-using Newtonsoft.Json.Converters;
 
 namespace HelpTrader;
 
@@ -42,7 +40,6 @@ public sealed class Startup
     {
         services.StoryBuilderServices();
         services.AddScoped<IRedisRepository, RedisRepository>();
-        services.AddScoped<ISimulatorBrokerClient, SimulatorBrokerClient>();
         services.AddScoped<IStoryBuilder, StoryBuilder>();
         services.AddScoped<IQueryBuilder, QueryBuilder>();
         services.AddScoped<IMovingAverage, MovingAverage>();
