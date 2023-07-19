@@ -43,7 +43,7 @@ public record EmaAnalysisStoryContext : IStoryContext<List<EmaAnalysisResponse>>
     /// <summary>
     /// Candle time from.
     /// </summary>
-    public DateTimeOffset TimeFrom { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset Time { get; set; } = DateTimeOffset.UtcNow;
 }
 
 /// <summary>
@@ -99,8 +99,8 @@ public class EmaAnalysisStory : BaseStory<EmaAnalysisStoryContext, List<EmaAnaly
             var candlesRequest = new GetCandlesRequest
             {
                 InstrumentId = data.Figi,
-                From = context.TimeFrom.Add(TimeSpan.FromDays(-context.UnloadingPeriodDays)).ToTimestamp(), 
-                To = context.TimeFrom.ToTimestamp(),
+                From = context.Time.Add(TimeSpan.FromDays(-context.UnloadingPeriodDays)).ToTimestamp(), 
+                To = context.Time.ToTimestamp(),
                 Interval = (Tinkoff.InvestApi.V1.CandleInterval)context.Interval,
             };
             
