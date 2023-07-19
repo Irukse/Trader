@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using bgTeam;
 using bgTeam.DataAccess;
 using HelpTrader.Services;
@@ -5,6 +6,8 @@ using HelpTrader.Services.Application.Manager.Repository;
 using bgTeam.DataAccess.Impl;
 using bgTeam.DataAccess.Impl.Dapper;
 using bgTeam.DataAccess.Impl.PostgreSQL;
+using HelpTrader.Services.Analysis;
+using Newtonsoft.Json.Converters;
 
 namespace HelpTrader;
 
@@ -30,7 +33,7 @@ public sealed class Startup
         { 
             options.Configuration = Configuration.GetValue<string>("CacheSettings:ConnectionString");
         });
-        services.AddInvestApiClient((_, settings) => settings.AccessToken = "");
+        services.AddInvestApiClient((_, settings) => settings.AccessToken = "t.OpinN5pJvPBNAfUb7dVg81poH1jehZvf-J0FFV3LmaN2xFRRkVfDv9Y10g9hY6OftOA3v-S7SebU7XNFPOLODg");
 
         DiSetup(services);
     }
@@ -42,11 +45,17 @@ public sealed class Startup
         services.AddScoped<ISimulatorBrokerClient, SimulatorBrokerClient>();
         services.AddScoped<IStoryBuilder, StoryBuilder>();
         services.AddScoped<IQueryBuilder, QueryBuilder>();
+        services.AddScoped<IMovingAverage, MovingAverage>();
         
         services.AddSingleton<IConnectionSetting, ConnectionSettings>();
         services.AddSingleton<ISqlDialect, SqlDialectWithUnderscoresDapper>();
         services.AddSingleton<ICrudService, CrudServiceDapper>();
         services.AddSingleton<IConnectionFactory, ConnectionFactoryPostgreSQL>();
+        
+        services.AddControllers().AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        });
     }
     
     public static void Configure(WebApplication app) {

@@ -23,7 +23,7 @@ public class GetFigiQuery : BaseQuery<GetFigiQueryContext, IEnumerable<ShareData
     }
     
     private readonly string GET_FIGI_SHARES_QUERY = $@"
-SELECT ticker, figi
+SELECT DISTINCT ticker, figi
 FROM shares
 WHERE ticker=ANY(@tickers)
 ";

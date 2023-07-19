@@ -40,8 +40,8 @@ public class ShareController : ControllerBase
     
     [HttpGet("TechnicalAnalysisInformation")]
     [Consumes(MediaTypeNames.Application.Json)]
-    public async Task<TechnicalAnalysisResponse> GetTechnicalAnalysisInformation([FromQuery] TechnicalAnalysisStoryContext context)
+    public async Task<List<EmaAnalysisResponse>> GetTechnicalAnalysisInformation([FromQuery] EmaAnalysisStoryContext context)
     {
-        return await _storyBuilder.ReturnAsync<TechnicalAnalysisStoryContext, TechnicalAnalysisResponse>(context);
+        return await _storyBuilder.ReturnAsync<EmaAnalysisStoryContext, List<EmaAnalysisResponse>>(context);
     }
 }

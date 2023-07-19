@@ -1,5 +1,8 @@
 namespace HelpTrader.Domain.Dto;
 
+/// <summary>
+/// Promotion data
+/// </summary>
 public class ShareData : ShareBase
 {
     /// <summary>
