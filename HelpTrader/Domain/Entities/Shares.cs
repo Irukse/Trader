@@ -21,6 +21,6 @@ public class Shares
     [ColumnName("currency")]
     public string Currency { get; set; }
     
-    [ColumnName("ticker")]
-    public string Ticker { get; set; }
+   [ColumnName("ticker")]
+   public string Ticker { get; set; }
 }

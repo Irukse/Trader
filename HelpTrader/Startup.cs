@@ -31,7 +31,7 @@ public sealed class Startup
         { 
             options.Configuration = Configuration.GetValue<string>("CacheSettings:ConnectionString");
         });
-        services.AddInvestApiClient((_, settings) => settings.AccessToken = "your token");
+        services.AddInvestApiClient((_, settings) => settings.AccessToken = "mm");
 
         DiSetup(services);
     }

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Numerics;
 using bgTeam.DataAccess;
 using Google.Protobuf.WellKnownTypes;
 using HelpTrader.Domain.Dto;
@@ -68,7 +69,8 @@ public class EmaAnalysisStory : BaseStory<EmaAnalysisStoryContext, List<EmaAnaly
     protected override async Task<List<EmaAnalysisResponse>> DoAsync(EmaAnalysisStoryContext context)
     {
         var candles = await GetCandles(context);
-        var candlesEma = await GetEmaAsync(context, candles);
+        var price = candles.ToDictionary(x => x.Key, x => x.Value.Candles.Select(x=>x.Close).ToList());
+        var candlesEma = await GetEmaAsync(context.SmoothingPeriod, price);
 
         return candlesEma;
     }
@@ -117,18 +119,16 @@ public class EmaAnalysisStory : BaseStory<EmaAnalysisStoryContext, List<EmaAnaly
     /// <param name="context"></param>
     /// <param name="candles"></param>
     /// <returns></returns>
-    private async Task<List<EmaAnalysisResponse>> GetEmaAsync(EmaAnalysisStoryContext context, Dictionary<string, GetCandlesResponse> candles)
+    private async Task<List<EmaAnalysisResponse>> GetEmaAsync(int smoothingPeriod, Dictionary<string, List<Quotation>> candles )
     {
         var ema = new List<EmaAnalysisResponse>();
         
         foreach (var candle in candles)
         {
-            var price = candle.Value.Candles.Select(x=> x.Close).ToList();
-            
             var candlesEma = new EmaAnalysisResponse()
             {
                 Ticker = candle.Key,
-                EmaData = await _movingAverage.GetEmaAsync(price, context.SmoothingPeriod, new List<decimal>()),
+                EmaData = await _movingAverage.GetEmaAsync(candle.Value, smoothingPeriod, new List<decimal>()),
             };
             
             ema.Add(candlesEma);

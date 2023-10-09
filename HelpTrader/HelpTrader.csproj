@@ -36,4 +36,8 @@
       <_ContentIncludedByDefault Remove="Views\_ViewStart.cshtml" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Services\Application\Manager\" />
+    </ItemGroup>
+
 </Project>

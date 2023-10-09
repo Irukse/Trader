@@ -39,10 +39,15 @@ WHERE ticker=ANY(@tickers)
             {
                 context.tickers
             });
+
+        //var result = await _crudService.GetAllAsync<Shares>(x => context.tickers.Contains(x.Ticker));
+        
+       var x = result.DistinctBy(x => x.Ticker).Select(x => new ShareData() { Ticker = x.Ticker, Figi = x.Figi });
+        
         
         transaction.Commit();
         connection.Close();
 
-        return result;
+        return x;
     }
 }
