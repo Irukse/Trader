@@ -69,8 +69,9 @@ public class EmaAnalysisStory : BaseStory<EmaAnalysisStoryContext, List<EmaAnaly
     protected override async Task<List<EmaAnalysisResponse>> DoAsync(EmaAnalysisStoryContext context)
     {
         var candles = await GetCandles(context);
-        var price = candles.ToDictionary(x => x.Key, x => x.Value.Candles.Select(x=>x.Close).ToList());
-        var candlesEma = await GetEmaAsync(context.SmoothingPeriod, price);
+        var CandlePrices = candles.ToDictionary(x => x.Key, x => x.Value.Candles.Select(x=>x.Close).ToList());
+        
+        var candlesEma = await GetEmaAsync(context.SmoothingPeriod, CandlePrices);
 
         return candlesEma;
     }
@@ -105,7 +106,7 @@ public class EmaAnalysisStory : BaseStory<EmaAnalysisStoryContext, List<EmaAnaly
                 To = context.Time.ToTimestamp(),
                 Interval = (Tinkoff.InvestApi.V1.CandleInterval)context.Interval,
             };
-            
+            // создать лист GetCandlesRequest, затем вызвать list.Parallel(_investApiClient.MarketData.GetCandles(candlesRequest))
             var candles = _investApiClient.MarketData.GetCandles(candlesRequest);
             candlesResponse.Add(data.Ticker,candles);
         }
@@ -122,7 +123,7 @@ public class EmaAnalysisStory : BaseStory<EmaAnalysisStoryContext, List<EmaAnaly
     private async Task<List<EmaAnalysisResponse>> GetEmaAsync(int smoothingPeriod, Dictionary<string, List<Quotation>> candles )
     {
         var ema = new List<EmaAnalysisResponse>();
-        
+        // опробовать многопоточность
         foreach (var candle in candles)
         {
             var candlesEma = new EmaAnalysisResponse()

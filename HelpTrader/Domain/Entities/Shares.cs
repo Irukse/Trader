@@ -8,7 +8,7 @@ namespace HelpTrader.Domain.Entities;
 [TableName("shares")]
 public class Shares
 {
-    [ColumnName("id")]
+    [ColumnName("Id")]
     [Identity]
     public long Id { get; set; }
     
