@@ -38,7 +38,7 @@ public class ShareController : ControllerBase
         return await _storyBuilder.ReturnAsync<SharePriceInformationStoryContext, List<SharePrice>>(context);
     }
     
-    [HttpGet("GetEma")]
+    [HttpGet("GetEma", Name = "GetEma")]
     [Consumes(MediaTypeNames.Application.Json)]
     public async Task<List<EmaAnalysisResponse>> GetEma([FromQuery] EmaAnalysisStoryContext context)
     {

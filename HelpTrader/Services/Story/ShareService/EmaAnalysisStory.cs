@@ -69,9 +69,13 @@ public class EmaAnalysisStory : BaseStory<EmaAnalysisStoryContext, List<EmaAnaly
     protected override async Task<List<EmaAnalysisResponse>> DoAsync(EmaAnalysisStoryContext context)
     {
         var candles = await GetCandles(context);
-        var CandlePrices = candles.ToDictionary(x => x.Key, x => x.Value.Candles.Select(x=>x.Close).ToList());
+        var candlePrices = candles
+            .ToDictionary(data => data.Key, dataValue => dataValue.Value.Candles.Select(x=>x.Close).ToList());
+       
+        var candleTime = candles
+            .ToDictionary(data => data.Key, dataValue => dataValue.Value.Candles.Select(x=>x.Time.ToDateTime()).ToList());
         
-        var candlesEma = await GetEmaAsync(context.SmoothingPeriod, CandlePrices);
+        var candlesEma = await GetEmaAsync(context.SmoothingPeriod, candlePrices, candleTime);
 
         return candlesEma;
     }
@@ -120,7 +124,7 @@ public class EmaAnalysisStory : BaseStory<EmaAnalysisStoryContext, List<EmaAnaly
     /// <param name="context"></param>
     /// <param name="candles"></param>
     /// <returns></returns>
-    private async Task<List<EmaAnalysisResponse>> GetEmaAsync(int smoothingPeriod, Dictionary<string, List<Quotation>> candles )
+    private async Task<List<EmaAnalysisResponse>> GetEmaAsync(int smoothingPeriod, Dictionary<string, List<Quotation>> candles, Dictionary<string, List<DateTime>> time)
     {
         var ema = new List<EmaAnalysisResponse>();
         // опробовать многопоточность
@@ -130,6 +134,7 @@ public class EmaAnalysisStory : BaseStory<EmaAnalysisStoryContext, List<EmaAnaly
             {
                 Ticker = candle.Key,
                 EmaData = await _movingAverage.GetEmaAsync(candle.Value, smoothingPeriod, new List<decimal>()),
+                EmaDataTime = time,
             };
             
             ema.Add(candlesEma);

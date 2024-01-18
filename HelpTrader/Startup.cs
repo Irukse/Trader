@@ -22,6 +22,7 @@ public sealed class Startup
     {
         services.AddRouting(options => options.LowercaseUrls = true);
         services.AddControllers();
+        services.AddControllersWithViews();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
         services.AddRazorPages();
@@ -31,8 +32,15 @@ public sealed class Startup
         { 
             options.Configuration = Configuration.GetValue<string>("CacheSettings:ConnectionString");
         });
-        services.AddInvestApiClient((_, settings) => settings.AccessToken = "mm");
-
+        services.AddInvestApiClient((_, settings) => settings.AccessToken = "t.qWrDkTMrbCbW-acOwm7S5JDHRBD2NZP4blntuSLWghk9uzVDG_Jvm3kWq-JfzvsS13iGyRNc8kRBHg3u7i21tA");
+        services.AddCors(options =>
+        {
+            options.AddPolicy("CorsPolicy", configPolisy =>
+                configPolisy
+                    .WithOrigins("http://localhost:63342")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod());
+        });
         DiSetup(services);
     }
 
@@ -69,9 +77,11 @@ public sealed class Startup
         app.UseHttpsRedirection();
         app.UseStaticFiles();
         app.UseRouting();
+        app.MapControllerRoute(name: "default", pattern:"{controller=Home}/{action=Index}");
         app.UseAuthorization();
         app.MapRazorPages();
         app.MapControllers();
+        app.UseCors("CorsPolicy");
         app.Run();
     }
 }

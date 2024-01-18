@@ -1,3 +1,5 @@
+using Google.Protobuf.WellKnownTypes;
+
 namespace HelpTrader.Services.Story.ShareService;
 
 /// <summary>
@@ -14,4 +16,9 @@ public class EmaAnalysisResponse
     /// Ema data
     /// </summary>
     public List<decimal> EmaData { get; init; }
+    
+    /// <summary>
+    /// Ema data time
+    /// </summary>
+    public Dictionary<string, List<DateTime>> EmaDataTime { get; init; }
 }

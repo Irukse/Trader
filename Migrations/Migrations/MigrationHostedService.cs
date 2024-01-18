@@ -18,7 +18,7 @@ public class MigrationHostedService : IHostedService
         
         using var scope = _serviceProvider.CreateScope();
         var runner = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();
-        
+
         runner.MigrateUp();
         
         return Task.CompletedTask;

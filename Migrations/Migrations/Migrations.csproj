@@ -17,9 +17,9 @@
       <PackageReference Include="bgTeam.Core" Version="6.1.6" />
       <PackageReference Include="bgTeam.Impl.Serilog" Version="6.1.6" />
       <PackageReference Include="Dapper" Version="2.0.78" />
-      <PackageReference Include="FluentMigrator" Version="3.3.2" />
-      <PackageReference Include="FluentMigrator.Runner" Version="3.3.2" />
-      <PackageReference Include="FluentMigrator.Runner.Postgres" Version="3.3.2" />
+      <PackageReference Include="FluentMigrator" Version="5.0.0" />
+      <PackageReference Include="FluentMigrator.Runner" Version="5.0.0" />
+      <PackageReference Include="FluentMigrator.Runner.Postgres" Version="5.0.0" />
       <PackageReference Include="Npgsql" Version="8.0.0-preview.4" />
     </ItemGroup>
 

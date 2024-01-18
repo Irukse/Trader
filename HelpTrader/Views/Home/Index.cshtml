@@ -1,0 +1,53 @@
+@page
+@model HelpTrader.Views.Home.Index
+
+@{
+    Layout = null;
+  var apiUrl = Url.Link("GetEma", new{Tickers="ENPG", Interval="CANDLE_INTERVAL_DAY", SmoothingPeriod="2", UnloadingPeriodDays="20"});
+}
+<div>
+    <canvas id="myChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  const ctx = document.getElementById('myChart');
+  let myRequest = "@apiUrl";
+
+  (async ()=>{
+    let response = await fetch(myRequest);
+    let data = await response.json();
+let content;
+    for (startData in data) {
+      
+      for (const [key, value] of Object.entries(data)) {
+        console.log(`${key}: ${value}`);
+        content = value;
+        let tic = value['ticker'];
+        let osX = value['emaDataTime']['ENPG'];
+        let osY = value['emaData']
+
+       // var ctx = document.getElementById(tic);
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: osX,
+            datasets: [{
+              label: '# of Votes',
+              data: osY,
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      }
+    }
+  })();
+</script>

@@ -2,8 +2,8 @@ using FluentMigrator;
 
 namespace Migrations.Migrations;
 
-[Migration(202312061900)]
-public class Migration_202312061900 : Migration
+[Migration(20122023)]
+public class Migrations_20122023 : Migration
 {
     public override void Up()
     {
